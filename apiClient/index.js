@@ -6,6 +6,8 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 
+const port = process.env.PORT || 8880
+
 // POST method for endpoint /sign
 app.post('/sign', (req, res) => {
   const param1 = req.body.parameter1; // Invoice file content in base64 format (XML file)
@@ -133,6 +135,7 @@ function executeShellCommand(command, res, outputFilePath) {
 }
 
 // Start the server
-app.listen(3000, () => {
-  console.log('Server listening on port 3000');
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
