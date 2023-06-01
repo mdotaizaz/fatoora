@@ -5,4 +5,4 @@ services:
       context: ./apiClient
       dockerfile: Dockerfile
     ports:
-      - 80:8880
+      - 8880:80
