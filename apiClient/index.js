@@ -15,6 +15,7 @@ app.post('/sign', (req, res) => {
 
   // Write the base64 content to a temporary file
   const tempPath = path.join(__dirname, 'temp', `${Math.random().toString(36).substring(7)}.xml`);
+  console.log(tempPath);
   fs.writeFile(tempPath, Buffer.from(param1, 'base64'), (err) => {
     if (err) {
       console.error(`Error writing invoice file: ${err.message}`);
