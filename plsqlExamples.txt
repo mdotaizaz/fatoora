@@ -1,0 +1,134 @@
+FUNCTION ENCODE64_CLOB(IN_CLOB CLOB) RETURN CLOB IS
+       --The chunk size must be a multiple of 48
+       CHUNKSIZE INTEGER := 576;
+       PLACE   INTEGER := 1;
+       FILE_SIZE INTEGER;
+       TEMP_CHUNK VARCHAR(4000);
+       OUT_CLOB  CLOB;
+BEGIN
+       FILE_SIZE := LENGTH(IN_CLOB);
+       WHILE (PLACE <= FILE_SIZE)
+       LOOP
+              TEMP_CHUNK := SUBSTR(IN_CLOB, PLACE, CHUNKSIZE);
+              OUT_CLOB := OUT_CLOB 
+              || UTL_RAW.CAST_TO_VARCHAR2(UTL_ENCODE.BASE64_ENCODE(UTL_RAW.CAST_TO_RAW(TEMP_CHUNK)));
+              PLACE := PLACE + CHUNKSIZE;
+       END LOOP;
+       RETURN OUT_CLOB;
+END;
+
+-- Endpoint /sign
+DECLARE
+  l_endpoint_url VARCHAR2(200);
+  l_request_body CLOB;
+  l_response CLOB;
+  l_blob BLOB;
+  l_blob_length NUMBER;
+  l_base64_content clob;
+BEGIN
+  -- Read the BLOB file and convert it to base64 format
+  SELECT blob_column INTO l_blob FROM your_table WHERE file_id = :P_FILE_ID;
+  l_blob_length := DBMS_LOB.GETLENGTH(l_blob);
+  l_base64_content := APEX_WEB_SERVICE.BLOB2CLOBBASE64(l_blob);
+
+  -- Construct the endpoint URL and request body for the /sign endpoint
+  l_endpoint_url := 'http://localhost:3000/sign';
+  l_request_body := '{"parameter1": "' || l_base64_content || '", "parameter2": "signedInvoiceName"}';
+
+  -- Make the RESTful request to the /sign endpoint
+  l_response := APEX_WEB_SERVICE.MAKE_REST_REQUEST(
+    p_url         => l_endpoint_url,
+    p_http_method => 'POST',
+    p_body        => l_request_body
+  );
+
+  -- Process the response from the /sign endpoint
+  -- ...
+END;
+
+-- Endpoint /qr
+DECLARE
+  l_endpoint_url VARCHAR2(200);
+  l_request_body CLOB;
+  l_response CLOB;
+  l_blob BLOB;
+  l_blob_length NUMBER;
+  l_base64_content VARCHAR2(32767);
+BEGIN
+  -- Read the BLOB file and convert it to base64 format
+  SELECT blob_column INTO l_blob FROM your_table WHERE file_id = :P_FILE_ID;
+  l_blob_length := DBMS_LOB.GETLENGTH(l_blob);
+  l_base64_content := APEX_WEB_SERVICE.BLOB2CLOBBASE64(l_blob);
+
+  -- Construct the endpoint URL and request body for the /qr endpoint
+  l_endpoint_url := 'http://localhost:3000/qr';
+  l_request_body := '{"parameter1": "' || l_base64_content || '"}';
+
+  -- Make the RESTful request to the /qr endpoint
+  l_response := APEX_WEB_SERVICE.MAKE_REST_REQUEST(
+    p_url         => l_endpoint_url,
+    p_http_method => 'POST',
+    p_body        => l_request_body
+  );
+
+  -- Process the response from the /qr endpoint
+  -- ...
+END;
+
+-- Endpoint /generatehash
+DECLARE
+  l_endpoint_url VARCHAR2(200);
+  l_request_body CLOB;
+  l_response CLOB;
+  l_blob BLOB;
+  l_blob_length NUMBER;
+  l_base64_content VARCHAR2(32767);
+BEGIN
+  -- Read the BLOB file and convert it to base64 format
+  SELECT blob_column INTO l_blob FROM your_table WHERE file_id = :P_FILE_ID;
+  l_blob_length := DBMS_LOB.GETLENGTH(l_blob);
+  l_base64_content := APEX_WEB_SERVICE.BLOB2CLOBBASE64(l_blob);
+
+  -- Construct the endpoint URL and request body for the /generatehash endpoint
+  l_endpoint_url := 'http://localhost:3000/generatehash';
+  l_request_body := '{"parameter1": "' || l_base64_content || '"}';
+
+  -- Make the RESTful request to the /generatehash endpoint
+  l_response := APEX_WEB_SERVICE.MAKE_REST_REQUEST(
+    p_url         => l_endpoint_url,
+    p_http_method => 'POST',
+    p_body        => l_request_body
+  );
+
+  -- Process the response from the /generatehash endpoint
+  -- ...
+END;
+
+-- Endpoint /invoicerequest
+DECLARE
+  l_endpoint_url VARCHAR2(200);
+  l_request_body CLOB;
+  l_response CLOB;
+  l_blob BLOB;
+  l_blob_length NUMBER;
+  l_base64_content VARCHAR2(32767);
+BEGIN
+  -- Read the BLOB file and convert it to base64 format
+  SELECT blob_column INTO l_blob FROM your_table WHERE file_id = :P_FILE_ID;
+  l_blob_length := DBMS_LOB.GETLENGTH(l_blob);
+  l_base64_content := APEX_WEB_SERVICE.BLOB2CLOBBASE64(l_blob);
+
+  -- Construct the endpoint URL and request body for the /invoicerequest endpoint
+  l_endpoint_url := 'http://localhost:3000/invoicerequest';
+  l_request_body := '{"parameter1": "' || l_base64_content || '", "parameter2": "signedInvoiceName", "parameter3": "outputFileName"}';
+
+  -- Make the RESTful request to the /invoicerequest endpoint
+  l_response := APEX_WEB_SERVICE.MAKE_REST_REQUEST(
+    p_url         => l_endpoint_url,
+    p_http_method => 'POST',
+    p_body        => l_request_body
+  );
+
+  -- Process the response from the /invoicerequest endpoint
+  -- ...
+END;
